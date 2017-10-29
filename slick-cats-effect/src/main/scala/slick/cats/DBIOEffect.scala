@@ -30,7 +30,7 @@ class DBIOEffect(db : BasicBackend#DatabaseDef)(implicit ec: ExecutionContext) e
     DBIO.from(p.future)
   }
 
-  override def suspend[A](thunk: => DBIO[A]): DBIO[A] = DBIO.suspend(thunk)
+  override def suspend[A](thunk: => DBIO[A]): DBIO[A] = DBIO.successful(()).flatMap(_ => thunk)
 
   override def flatMap[A, B](fa: DBIO[A])(f: (A) => DBIO[B]): DBIO[B] = fa.flatMap(f)
 
