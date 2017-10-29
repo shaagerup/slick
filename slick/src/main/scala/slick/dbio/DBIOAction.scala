@@ -148,6 +148,9 @@ object DBIOAction {
 
   /** Lift a constant value to a [[DBIOAction]]. */
   def successful[R](v: R): DBIOAction[R, NoStream, Effect] = SuccessAction[R](v)
+  
+  /** Suspend a value to a [[DBIOAction]]. */
+  def suspend[R](v: => DBIO[R]): DBIOAction[R, NoStream, Effect] = SuspendAction[R](() => v)
 
   /** Create a [[DBIOAction]] that always fails. */
   def failed(t: Throwable): DBIOAction[Nothing, NoStream, Effect] = FailureAction(t)
@@ -311,6 +314,11 @@ trait DatabaseAction[+R, +S <: NoStream, -E <: Effect] extends DBIOAction[R, S, 
 case class SuccessAction[+R](value: R) extends SynchronousDatabaseAction[R, NoStream, BasicBackend, Effect] {
   def getDumpInfo = DumpInfo("success", String.valueOf(value))
   def run(ctx: BasicBackend#Context): R = value
+}
+
+/** A DBIOAction that suspends a value. */
+case class SuspendAction[+R](thunk: () => DBIO[R]) extends DBIOAction[R, NoStream, Effect] {
+  def getDumpInfo = DumpInfo("suspend", String.valueOf(thunk))
 }
 
 /** A DBIOAction that fails. */

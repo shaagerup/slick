@@ -141,6 +141,7 @@ trait BasicBackend { self =>
       logAction(a, ctx)
       a match {
         case SuccessAction(v) => Future.successful(v)
+        case SuspendAction(thunk) => runInContext(thunk(),ctx,streaming,false)
         case FailureAction(t) => Future.failed(t)
         case FutureAction(f) => f
         case FlatMapAction(base, f, ec) =>

@@ -323,6 +323,17 @@ object SlickBuild extends Build {
     )
   ) dependsOn(slickProject)
 
+  lazy val slickCatsEffectProject = Project(id = "cats-effect", base = file("slick-cats-effect"),
+    settings = Defaults.coreDefaultSettings ++ sdlcSettings ++ sharedSettings ++ extTarget("codegen") ++ commonSdlcSettings ++ Seq(
+      name := "Slick-Cats-Effect",
+      libraryDependencies += Dependencies.scalaTestFor(scalaVersion.value),
+      libraryDependencies += "org.typelevel" %% "cats-effect" % "0.4",
+      description := "Slick-Cats-Effect",
+      unmanagedResourceDirectories in Test += (baseDirectory in aRootProject).value / "common-test-resources"//,
+      //test := (), testOnly :=  () // suppress test status output
+    )
+  ) dependsOn(slickProject)
+
   lazy val slickHikariCPProject = Project(id = "hikaricp", base = file("slick-hikaricp"),
     settings = Defaults.coreDefaultSettings ++ sdlcSettings ++ sharedSettings ++ extTarget("hikaricp") ++ commonSdlcSettings ++ osgiSettings ++ Seq(
       name := "Slick-HikariCP",
